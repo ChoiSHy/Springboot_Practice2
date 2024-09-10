@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>파라미터 없는 ajax 통신</title>
+</head>
+<body>
+<script>
+    function onReadyStateChange(event){
+        console.log('onReadyStateChange()...'+(ajaxRequest.readyState));
+        if(ajaxRequest.readyState === XMLHttpRequest.DONE){
+            if(ajaxRequest.status===200){
+                console.log(ajaxRequest.responseText);
+            }else{
+                console.error('request failed');
+            }
+        }
+
+    }
+    const ajaxRequest = new XMLHttpRequest();
+
+    ajaxRequest.onreadystatechange = onReadyStateChange;
+    ajaxRequest.open('GET', '/get-with-no-parameter');
+    ajaxRequest.send();
+</script>
+</body>
+</html>

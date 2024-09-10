@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookmark example</title>
+</head>
+<body>
+<form onsubmit="return addBookmarkRequest();">
+    <label>즐겨찾기 이름 : </label><input type="text" name="name"><br>
+    <label>즐겨찾기 URL : </label><input type="text" name="url"><br>
+    <input type="submit"><br>
+</form>
+<button onclick="getBookmarkListRequest();">즐겨찾기 목록 가져오기</button>
+
+<ol id="bookmark-list">
+    <!-- 즐겨찾기 목록 나오는 곳-->
+</ol>
+<script>
+    function addBookmarkRequest() {
+        // html 문서로부터 name 과 url 받아와 변수에 저장
+        const name = document.querySelector("input[name=name]").value;  // <input>라벨 중 name의 값을 가져오기
+        const url = document.querySelector('input[name=url]').value;    // <input>라벨 중 url의 값을 가져오기
+
+        // REST API에 보낼 JSON 생성
+        const requestObject = {name: name, url: url};       // 객체 생성
+        const requestJSON = JSON.stringify(requestObject);  // 객체 -> JSON
+
+        // 이벤트 핸들러 생성해, 요청에 성공하면 페이지에 메시지 출력
+        function onReadyStateChange(event) {
+            const currentAjaxRequest = event.currentTarget;
+            if (currentAjaxRequest.state === 200)   // 리턴 상태가 200이면 정상 등록
+                alert("즐겨찾기가 등록되었습니다.");
+            else
+                console.error("request failed");
+        }
+
+        // ajax 요청 생성 및 전송
+        const ajaxRequest = new XMLHttpRequest();   // 새 ajax 요청 생성
+
+        ajaxRequest.onreadystatechange = onReadyStateChange;
+        ajaxRequest.open('POST', '/bookmark/register');     // POST방식으로    ~/bookmark/register로 전송
+        ajaxRequest.setRequestHeader('Content-Type', 'application/json'); // 헤더 수정
+        ajaxRequest.send(requestJSON);  // 전송
+    }
+
+    function getBookmarkListRequest() {
+        // 이벤트 발생 시, 사용될 함수 생성
+        function onReadyStateChange(event) {
+            const currentAjaxRequest = event.currentTarget;
+
+            if (currentAjaxRequest.readyState === XMLHttpRequest.DONE) {
+                if (currentAjaxRequest.status === 200) {
+                    // 정상적인 응답이 돌아온다면
+
+                    // bookmark-list id를 가진 항목 가져와 내부 내용 삭제
+                    const bookmarkListDom = document.querySelector('#bookmark-list');
+                    bookmarkListDom.innerHTML = '';
+
+                    // 응답에서의 JSON을 가져와 각 항목을 <li>에 포함(이름 - url)
+                    const bookmarks = JSON.parse(currentAjaxRequest.responseText);
+                    bookmarks.forEach(bookmark => {
+                        const liNode = document.createElement('li');
+                        const textNode = document.createTextNode(bookmark.name + ' - ' + bookmark.url);
+
+                        liNode.appendChild(textNode);
+                        bookmarkListDom.appendChild(liNode);
+                    });
+                } else {
+                    console.error('request failed');
+                }
+            }
+        }
+
+        const ajaxRequest = new XMLHttpRequest();
+
+        ajaxRequest.onreadystatechange = onReadyStateChange;
+        ajaxRequest.open('GET', '/bookmark/list');
+        ajaxRequest.send();
+
+    }
+</script>
+</body>
+</html>

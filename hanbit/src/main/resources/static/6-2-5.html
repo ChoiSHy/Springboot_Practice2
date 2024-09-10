@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>script example</title>
+</head>
+<body>
+<!-- 스크립트에서 <a>를 찾을 수 없어 오류가 발생하나, html 문서 자체에는 문제가 없으므로 '어떤 링크'로 표기됨-->
+<!--script>
+  document.querySelector('a').innerText='구글로 이동';
+</script-->
+
+<a href="https://www.google.com/">어떤 링크</a>
+
+<script>
+  <!-- html 문서에서 <a>태그를 찾아 내용을 '구글로 이동'으로 변경함 -->
+  document.querySelector('a').innerText='구글로 이동';
+</script>
+</body>
+</html>
