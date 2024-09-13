@@ -40,5 +40,8 @@ public class ProductRepository {
         products.set(indexToModify, product);   // 리스트에서 해당 인덱스 정보 수정
         return products.get(indexToModify);
     }
-
+    public void delete(Long id){
+        Product product = this.findById(id);    // 삭제할 상품을 검색해
+        products.remove(product);               // 목록에서 삭제
+    }
 }
