@@ -1,5 +1,8 @@
 package kr.co.hanbit.productmanagement.domain;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -8,9 +11,15 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 public class Product {
+
     private Long id;
+    @Size(min = 1, max = 100)
     private String name;
+    @Max(1_000_000)
+    @Min(0)
     private Integer price;
+    @Max(9_999)
+    @Min(0)
     private Integer amount;
 
     public Product(String name, Integer price, Integer amount) {
