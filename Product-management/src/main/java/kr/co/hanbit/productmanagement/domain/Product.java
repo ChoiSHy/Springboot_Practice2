@@ -51,4 +51,16 @@ public class Product {
         Product product = (Product) obj;
         return Objects.equals(id, product.id);  // 두 객체의 id만 같아도 같은 정보라고 인식
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public Integer getAmount() {
+        return amount;
+    }
 }

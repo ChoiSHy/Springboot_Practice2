@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
+/*
+* 단순 애플리케이션 내의 기능만으로 데이터를 처리하는 것을 배우는 Repository.
+* 휘발성 데이터이기 때문에 실질적으로 사용하지는 않겠지만, JAVA 기능 및 레이어드 설계를 이해하기 위해 연습
+*
+* */
 @Repository
 public class ProductRepository {
     private List<Product> products = new CopyOnWriteArrayList<>();

@@ -33,7 +33,7 @@ public class ProductController {
     public List<ProductDto> findByName(@RequestParam(required = false) String name){
         if(name == null)
             return simpleProductService.findAll();
-        return simpleProductService.findByName(name);
+        return simpleProductService.findByNameContaining(name);
     }
     @RequestMapping(value="/products/{id}",method = RequestMethod.PUT)
     public ProductDto updateProduct(
