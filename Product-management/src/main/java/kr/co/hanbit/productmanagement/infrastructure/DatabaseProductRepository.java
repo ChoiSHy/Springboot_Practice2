@@ -1,11 +1,10 @@
 package kr.co.hanbit.productmanagement.infrastructure;
 
-import kr.co.hanbit.productmanagement.domain.Exception.EntityNotFoundException;
 import kr.co.hanbit.productmanagement.domain.Product;
+import kr.co.hanbit.productmanagement.domain.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,7 +20,8 @@ import java.util.List;
 *
 * */
 @Repository
-public class DatabaseProductRepository {
+@Profile("prod")    // prod = production(운영 환경, 상용 환경)
+public class DatabaseProductRepository implements ProductRepository {
     //private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedJdbcTemplate;   // NamedParameterJdbcTemplate 을 이용해 ? 대신 각 속성의 이름으로 입력 가능
     @Autowired
@@ -67,7 +67,7 @@ public class DatabaseProductRepository {
         return products;
     }
 
-    public List<Product> findByName(String name) {
+    public List<Product> findByNameContaining(String name) {
         SqlParameterSource namedParameter = new MapSqlParameterSource("name", "%"+name+"%");
 
         List<Product> products = namedJdbcTemplate.query(
