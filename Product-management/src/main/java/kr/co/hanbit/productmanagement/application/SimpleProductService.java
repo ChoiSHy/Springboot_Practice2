@@ -45,6 +45,7 @@ public class SimpleProductService {
         Product product = productRepository.findById(id);                   // repository 에서 id에 해당하는 객체 호출
         ProductDto productDto = modelMapper.map(product, ProductDto.class); // Product -> ProductDto
         return productDto;
+        //return new ProductDto();
     }
 
     public List<ProductDto> findAll() {

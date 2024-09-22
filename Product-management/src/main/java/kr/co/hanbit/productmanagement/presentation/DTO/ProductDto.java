@@ -18,4 +18,10 @@ public class ProductDto {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public ProductDto(String name, Integer price, Integer amount) {
+        this.name = name;
+        this.price = price;
+        this.amount = amount;
+    }
 }

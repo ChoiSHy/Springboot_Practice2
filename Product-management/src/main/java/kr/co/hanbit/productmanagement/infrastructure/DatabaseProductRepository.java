@@ -1,9 +1,11 @@
 package kr.co.hanbit.productmanagement.infrastructure;
 
+import kr.co.hanbit.productmanagement.domain.Exception.EntityNotFoundException;
 import kr.co.hanbit.productmanagement.domain.Product;
 import kr.co.hanbit.productmanagement.domain.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,18 +16,20 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+
 /*
-* JPA를 이용하지 않고, Repository 구현 연습
-* SQL 연습과 데이터베이스 연결 연습 목적
-*
-* */
+ * JPA를 이용하지 않고, Repository 구현 연습
+ * SQL 연습과 데이터베이스 연결 연습 목적
+ *
+ * */
 @Repository
 @Profile("prod")    // prod = production(운영 환경, 상용 환경)
 public class DatabaseProductRepository implements ProductRepository {
     //private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate namedJdbcTemplate;   // NamedParameterJdbcTemplate 을 이용해 ? 대신 각 속성의 이름으로 입력 가능
+
     @Autowired
-    public DatabaseProductRepository(NamedParameterJdbcTemplate namedJdbcTemplate){
+    public DatabaseProductRepository(NamedParameterJdbcTemplate namedJdbcTemplate) {
         this.namedJdbcTemplate = namedJdbcTemplate;
     }
 
@@ -48,14 +52,21 @@ public class DatabaseProductRepository implements ProductRepository {
     }
 
     public Product findById(Long id) {
-        SqlParameterSource namedParameter = new MapSqlParameterSource("id",id); // id 매핑을 위해 MapSqlParameterSource 사용
-        Product product = namedJdbcTemplate.queryForObject(
-                "select id, name, price, amount from products where id = :id",   // select문으로 조건에 맞는 데이터 불러오기
-                namedParameter,
-                new BeanPropertyRowMapper<>(Product.class)                          // 조회한 정보를 Product 인스턴스로 만들어주기
-        );                                                                          // 필요한 조건: 클래스에 인자없는 생성자 + 각 속성에 대한 setter 메서드
+        SqlParameterSource namedParameter = new MapSqlParameterSource("id", id); // id 매핑을 위해 MapSqlParameterSource 사용
 
+        Product product = null;
+        try {
+            product = namedJdbcTemplate.queryForObject(
+                    "select id, name, price, amount from products where id = :id",   // select문으로 조건에 맞는 데이터 불러오기
+                    namedParameter,
+                    new BeanPropertyRowMapper<>(Product.class)                          // 조회한 정보를 Product 인스턴스로 만들어주기
+            );
+        } catch (
+                EmptyResultDataAccessException exception) {                  // 필요한 조건: 클래스에 인자없는 생성자 + 각 속성에 대한 setter 메서드
+            throw new EntityNotFoundException("Product를 찾지 못했습니다.");
+        }
         return product;
+
     }
 
     public List<Product> findAll() {
@@ -68,12 +79,12 @@ public class DatabaseProductRepository implements ProductRepository {
     }
 
     public List<Product> findByNameContaining(String name) {
-        SqlParameterSource namedParameter = new MapSqlParameterSource("name", "%"+name+"%");
+        SqlParameterSource namedParameter = new MapSqlParameterSource("name", "%" + name + "%");
 
         List<Product> products = namedJdbcTemplate.query(
                 "select * from products where name like :name"
-                ,namedParameter
-                ,new BeanPropertyRowMapper<>(Product.class)
+                , namedParameter
+                , new BeanPropertyRowMapper<>(Product.class)
         );
 
         return products;
@@ -83,7 +94,7 @@ public class DatabaseProductRepository implements ProductRepository {
         SqlParameterSource namedParameter = new BeanPropertySqlParameterSource(product);
         namedJdbcTemplate.update(
                 "update products set name=:name, price=:price, amount=:amount where id=:id"
-        ,namedParameter);
+                , namedParameter);
 
         return product;
     }
