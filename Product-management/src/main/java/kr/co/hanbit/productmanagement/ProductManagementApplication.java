@@ -18,6 +18,8 @@ public class ProductManagementApplication {
     public static void main(String[] args) {
         SpringApplication.run(ProductManagementApplication.class, args);
     }
+    /*
+
     @Bean
     public ModelMapper modelMapper(){
         ModelMapper modelMapper = new ModelMapper();
@@ -26,6 +28,7 @@ public class ProductManagementApplication {
                 .setFieldMatchingEnabled(true);
         return modelMapper;
     }
+    */
     @Bean
     @Profile("prod")
     public ApplicationRunner runner(DataSource dataSource){

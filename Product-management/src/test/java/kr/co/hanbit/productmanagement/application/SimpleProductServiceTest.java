@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest     // 스프링 컨테이너 통합 테스트
-@ActiveProfiles("prod") // Profile 지정 -> test
+@ActiveProfiles("test") // Profile 지정 -> test / prod
 class SimpleProductServiceTest {
     @Autowired  // 테스트 상황에선 생성자에서 주입하지 않고, 바로 의존성 주입을 해도 무관
     SimpleProductService simpleProductService;
 
-    @Transactional  // 테스트 시 데이터베이스에 테스트 내용이 반영되지 않도록 트랜젝션 처리 표시. 테스트 후 커밋 아닌 롤백됨.
+    //@Transactional  // 테스트 시 데이터베이스에 테스트 내용이 반영되지 않도록 트랜젝션 처리 표시. 테스트 후 커밋 아닌 롤백됨.
     @Test   // 테스트 코드 의미
     @DisplayName("상품을 추가한 후 id로 조회하면 해당 상품이 조회되어야 한다.") // 테스트 코드 이름
     void productAddAndFindByIdTest(){

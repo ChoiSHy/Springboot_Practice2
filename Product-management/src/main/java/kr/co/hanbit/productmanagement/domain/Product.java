@@ -3,15 +3,13 @@ package kr.co.hanbit.productmanagement.domain;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Objects;
 
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Product {
@@ -31,6 +29,7 @@ public class Product {
         this.price = price;
         this.amount = amount;
     }
+
     public Boolean sameId(Long id) {
         // Getter 없이 이름 비교를 위해 존재
         return this.id.equals(id);
@@ -49,4 +48,6 @@ public class Product {
         Product product = (Product) obj;
         return Objects.equals(id, product.id);  // 두 객체의 id만 같아도 같은 정보라고 인식
     }
+
+
 }
