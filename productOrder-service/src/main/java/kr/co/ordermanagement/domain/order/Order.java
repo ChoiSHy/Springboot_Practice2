@@ -28,4 +28,15 @@ public class Order {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public Boolean sameId(Long id) {
+        return this.id.equals(id);
+    }
+    public Boolean sameState(String state){
+        return this.state.equals(state);
+    }
 }

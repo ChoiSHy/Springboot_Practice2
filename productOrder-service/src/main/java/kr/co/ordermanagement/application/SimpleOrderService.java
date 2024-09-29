@@ -1,11 +1,13 @@
 package kr.co.ordermanagement.application;
 
+import kr.co.ordermanagement.domain.exception.EntityNotFoundException;
 import kr.co.ordermanagement.domain.order.Order;
 import kr.co.ordermanagement.domain.order.OrderRepository;
 import kr.co.ordermanagement.domain.product.Product;
 import kr.co.ordermanagement.domain.product.ProductRepository;
 import kr.co.ordermanagement.presentation.dto.OrderRequestDto;
 import kr.co.ordermanagement.presentation.dto.OrderResponseDto;
+import kr.co.ordermanagement.presentation.dto.OrderStateRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,20 +25,20 @@ public class SimpleOrderService {
         this.orderRepository = orderRepository;
     }
 
-
+    /* 주문 생성 */
     public OrderResponseDto createOrder(List<OrderRequestDto> orderDtos) {
         List<Product> orderedProducts = makeOrderedProducts(orderDtos); // OrderRequestDto -> Product( 재고 체크 )
-        decreaseProductsAmount(orderedProducts);    // 주문량만큼 재고 감소
+        decreaseProductsAmount(orderedProducts);    // 주문량 만큼 재고 감소
 
         Order order = new Order(orderedProducts);
-        Order savedOrder = orderRepository.add(order);
+        Order savedOrder = orderRepository.add(order);  // 주문 내역 저장
 
-        OrderResponseDto responseDto = OrderResponseDto.toDto(savedOrder);
+        OrderResponseDto responseDto = OrderResponseDto.toDto(savedOrder);  // Entity -> Dto
         return responseDto;
 
 
     }
-
+    /* 재고가 충분한 지 확인한 뒤에, 주문한 상품 반환 */
     private List<Product> makeOrderedProducts(List<OrderRequestDto> orderRequestDtos) {
         return orderRequestDtos.stream()
                 .map(orderRequestDto -> {
@@ -44,7 +46,7 @@ public class SimpleOrderService {
                     Product product = productRepository.findById(productId);
                     Integer orderedAmount = orderRequestDto.getAmount();
 
-                    product.checkEnoughAmount(orderedAmount);
+                    product.checkEnoughAmount(orderedAmount);   // 재고량 검사
 
                     return new Product(
                             productId,
@@ -54,6 +56,7 @@ public class SimpleOrderService {
                     );
                 }).toList();
     }
+    /* 상품의 재고 감소 */
     private void decreaseProductsAmount(List<Product> orderedProducts) {
         orderedProducts.stream()
                 .forEach(orderedProduct->{
@@ -63,7 +66,30 @@ public class SimpleOrderService {
                     Integer orderAmount = orderedProduct.getAmount();
                     product.decreaseAmount(orderAmount);
 
-                    productRepository.update(product);
+                    //productRepository.update(product);
                 });
+    }
+    /* id를 통해 주문 조회 */
+    public OrderResponseDto findOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId);
+
+        OrderResponseDto responseDto = OrderResponseDto.toDto(order);
+        return responseDto;
+    }
+
+    public OrderResponseDto changeOrderStateById(Long orderId, OrderStateRequestDto requestDto) {
+        Order order = orderRepository.findById(orderId);
+        order.setState(requestDto.getState());
+
+        OrderResponseDto responseDto = OrderResponseDto.toDto(order);
+        return responseDto;
+    }
+
+    public List<OrderResponseDto> findOrdersByOrderState(String state) {
+        List<Order> orderList = orderRepository.findByOrderState(state);
+        List<OrderResponseDto> orderResponseDtoList = orderList.stream()
+                .map(order -> OrderResponseDto.toDto(order))
+                .toList();
+        return orderResponseDtoList;
     }
 }
