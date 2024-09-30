@@ -43,6 +43,7 @@ public class OrderRestController {
 
     @RequestMapping(value = "/orders/{orderId}/cancel", method = RequestMethod.PATCH)
     public ResponseEntity<OrderResponseDto> cancelOrderById(@PathVariable Long orderId){
-
+        OrderResponseDto responseDto = simpleOrderService.cancelOrderById(orderId);
+        return ResponseEntity.ok(responseDto);
     }
 }

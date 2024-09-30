@@ -36,7 +36,12 @@ public class Order {
     public Boolean sameId(Long id) {
         return this.id.equals(id);
     }
-    public Boolean sameState(String state){
+
+    public Boolean sameState(String state) {
         return this.state.equals(state);
+    }
+
+    public Boolean isCancelable() {
+        return this.state.equals("CREATED");
     }
 }

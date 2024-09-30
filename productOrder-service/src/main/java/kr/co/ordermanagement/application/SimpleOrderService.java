@@ -1,6 +1,7 @@
 package kr.co.ordermanagement.application;
 
 import kr.co.ordermanagement.domain.exception.EntityNotFoundException;
+import kr.co.ordermanagement.domain.exception.NotCancelableException;
 import kr.co.ordermanagement.domain.order.Order;
 import kr.co.ordermanagement.domain.order.OrderRepository;
 import kr.co.ordermanagement.domain.product.Product;
@@ -91,5 +92,16 @@ public class SimpleOrderService {
                 .map(order -> OrderResponseDto.toDto(order))
                 .toList();
         return orderResponseDtoList;
+    }
+
+    public OrderResponseDto cancelOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId);
+        if(!order.isCancelable())
+            throw new NotCancelableException("이미 취소되었거나 취소할 수 없는 주문상태입니다.");
+
+        order.setState("CANCELED");
+
+        OrderResponseDto responseDto = OrderResponseDto.toDto(order);
+        return responseDto;
     }
 }
