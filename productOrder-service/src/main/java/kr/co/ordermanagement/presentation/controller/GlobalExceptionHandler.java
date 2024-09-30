@@ -1,6 +1,7 @@
 package kr.co.ordermanagement.presentation.controller;
 
 import kr.co.ordermanagement.domain.exception.EntityNotFoundException;
+import kr.co.ordermanagement.domain.exception.NotCancelableException;
 import kr.co.ordermanagement.domain.exception.NotEnoughAmountException;
 import kr.co.ordermanagement.presentation.ErrorMessage;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,11 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(NotEnoughAmountException.class)
     public ResponseEntity<ErrorMessage> handleNotEnoughAmountException(NotEnoughAmountException ex){
+        ErrorMessage errorMessage = new ErrorMessage(ex.getMessage());
+        return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(NotCancelableException.class)
+    public ResponseEntity<ErrorMessage> handleNotCancelableException(NotCancelableException ex){
         ErrorMessage errorMessage = new ErrorMessage(ex.getMessage());
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }

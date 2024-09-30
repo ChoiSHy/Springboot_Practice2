@@ -4,6 +4,7 @@ import kr.co.ordermanagement.domain.exception.EntityNotFoundException;
 import kr.co.ordermanagement.domain.exception.NotCancelableException;
 import kr.co.ordermanagement.domain.order.Order;
 import kr.co.ordermanagement.domain.order.OrderRepository;
+import kr.co.ordermanagement.domain.order.State;
 import kr.co.ordermanagement.domain.product.Product;
 import kr.co.ordermanagement.domain.product.ProductRepository;
 import kr.co.ordermanagement.presentation.dto.OrderRequestDto;
@@ -80,13 +81,14 @@ public class SimpleOrderService {
 
     public OrderResponseDto changeOrderStateById(Long orderId, OrderStateRequestDto requestDto) {
         Order order = orderRepository.findById(orderId);
-        order.setState(requestDto.getState());
+        State state = requestDto.getState();
+        order.setState(state);
 
         OrderResponseDto responseDto = OrderResponseDto.toDto(order);
         return responseDto;
     }
 
-    public List<OrderResponseDto> findOrdersByOrderState(String state) {
+    public List<OrderResponseDto> findOrdersByOrderState(State state) {
         List<Order> orderList = orderRepository.findByOrderState(state);
         List<OrderResponseDto> orderResponseDtoList = orderList.stream()
                 .map(order -> OrderResponseDto.toDto(order))
@@ -96,10 +98,7 @@ public class SimpleOrderService {
 
     public OrderResponseDto cancelOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId);
-        if(!order.isCancelable())
-            throw new NotCancelableException("이미 취소되었거나 취소할 수 없는 주문상태입니다.");
-
-        order.setState("CANCELED");
+        order.cancel();
 
         OrderResponseDto responseDto = OrderResponseDto.toDto(order);
         return responseDto;

@@ -1,6 +1,7 @@
 package kr.co.ordermanagement.presentation.dto;
 
 import kr.co.ordermanagement.domain.order.Order;
+import kr.co.ordermanagement.domain.order.State;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,7 +13,7 @@ public class OrderResponseDto {
     private Long id;
     private List<ProductDto> orderedProducts;
     private Integer totalPrice;
-    private String state;
+    private State state;
 
     public static OrderResponseDto toDto(Order order) {
         return new OrderResponseDto(

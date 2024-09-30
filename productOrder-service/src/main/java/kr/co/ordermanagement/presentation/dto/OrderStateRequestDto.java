@@ -1,9 +1,9 @@
 package kr.co.ordermanagement.presentation.dto;
 
+import kr.co.ordermanagement.domain.order.State;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class OrderStateRequestDto {
-    String state;
+    State state;
 }

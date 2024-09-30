@@ -1,6 +1,7 @@
 package kr.co.ordermanagement.presentation.controller;
 
 import kr.co.ordermanagement.application.SimpleOrderService;
+import kr.co.ordermanagement.domain.order.State;
 import kr.co.ordermanagement.presentation.dto.OrderRequestDto;
 import kr.co.ordermanagement.presentation.dto.OrderResponseDto;
 import kr.co.ordermanagement.presentation.dto.OrderStateRequestDto;
@@ -36,7 +37,7 @@ public class OrderRestController {
         return ResponseEntity.ok(responseDto);
     }
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
-    public ResponseEntity<List<OrderResponseDto>> findOrdersByOrderState(@RequestParam String state){
+    public ResponseEntity<List<OrderResponseDto>> findOrdersByOrderState(@RequestParam State state){
         List<OrderResponseDto> orderList = simpleOrderService.findOrdersByOrderState(state);
         return ResponseEntity.ok(orderList);
     }

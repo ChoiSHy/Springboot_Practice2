@@ -1,5 +1,6 @@
 package kr.co.ordermanagement.domain.order;
 
+import kr.co.ordermanagement.domain.exception.NotCancelableException;
 import kr.co.ordermanagement.domain.product.Product;
 import kr.co.ordermanagement.presentation.dto.OrderRequestDto;
 import lombok.Getter;
@@ -11,12 +12,12 @@ public class Order {
     private Long id;
     private List<Product> orderedProducts;
     private Integer totalPrice;
-    private String state;
+    private State state;
 
     public Order(List<Product> orderedProducts) {
         this.orderedProducts = orderedProducts;
         this.totalPrice = calculateTotalPrice(orderedProducts);
-        this.state = "CREATED";
+        this.state = State.CREATED;
     }
 
     private Integer calculateTotalPrice(List<Product> orderedProducts) {
@@ -29,7 +30,7 @@ public class Order {
         this.id = id;
     }
 
-    public void setState(String state) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -37,11 +38,13 @@ public class Order {
         return this.id.equals(id);
     }
 
-    public Boolean sameState(String state) {
+    public Boolean sameState(State state) {
         return this.state.equals(state);
     }
 
-    public Boolean isCancelable() {
-        return this.state.equals("CREATED");
+    public void cancel() {
+        if(!this.state.equals(State.CREATED))
+            throw new NotCancelableException("이미 취소되었거나 취소할 수 없는 주문상태입니다.");
+        this.state = State.CANCELED;
     }
 }
